@@ -1,27 +1,16 @@
-import * as React from 'react';
-import { StyleSheet,  View} from 'react-native';
-import { Router } from './providers/RouterProvider';
-import MenuScreen from './screens/MenuScreen';
-import StudyScreen from './screens/StudyScreen';
+import { Container } from 'native-base'
+import * as React from 'react'
+import { Router } from './providers/RouterProvider'
+import StudyScreen from './screens/StudyScreen'
 
 function App() {
   return (
-    <View style={styles.container}>
-      <Router index="menu" routes={[
-        { key: 'menu', screen: MenuScreen },
-        { key: 'study', screen: StudyScreen },
-      ]} />
-    </View>
+    <Router
+      index="study"
+      routes={[{ key: 'study', screen: StudyScreen }]}
+      render={screen => <Container>{screen}</Container>}
+    />
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-});
 
 export default App
