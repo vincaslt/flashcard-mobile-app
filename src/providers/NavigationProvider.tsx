@@ -8,24 +8,19 @@ const RouterContext = React.createContext<string>('')
 const NavigatorContext = React.createContext<Navigator>({ navigate: () => undefined })
 
 interface RouterProps {
-  render: (screen: React.ReactNode) => React.ReactNode
+  children: React.ReactNode
   index: string
-  routes: Array<{
-    key: string
-    screen: React.ReactType
-  }>
+  routes: string[]
 }
 
-const Router = ({ routes, index, render }: RouterProps) => {
+const NavigationProvider = ({ routes, index, children }: RouterProps) => {
   const [activeRoute, setActiveRoute] = React.useState(index)
 
-  const route = routes.find(({ key }) => key === activeRoute)
+  const route = routes.find(key => key === activeRoute)
 
   if (!route) {
     throw Error(`Route ${activeRoute} not found!`)
   }
-
-  const Screen = route.screen
 
   return (
     <RouterContext.Provider value={activeRoute}>
@@ -34,7 +29,7 @@ const Router = ({ routes, index, render }: RouterProps) => {
           navigate: setActiveRoute
         }}
       >
-        {render(<Screen />)}
+        {children}
       </NavigatorContext.Provider>
     </RouterContext.Provider>
   )
@@ -43,4 +38,4 @@ const Router = ({ routes, index, render }: RouterProps) => {
 const useNavigation = () => React.useContext(NavigatorContext)
 const useActiveRoute = () => React.useContext(RouterContext)
 
-export { Router, useNavigation, useActiveRoute }
+export { NavigationProvider, useNavigation, useActiveRoute }

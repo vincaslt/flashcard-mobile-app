@@ -1,6 +1,7 @@
 import { useAsyncStorage } from '@react-native-community/async-storage'
-import { addDays, isAfter } from 'date-fns'
+import { addDays, addHours, isAfter } from 'date-fns'
 import * as React from 'react'
+import config from '../config'
 
 enum FlashcardLevel {
   None,
@@ -20,13 +21,13 @@ const nextLevel: { [key in FlashcardLevel]: FlashcardLevel } = {
   [FlashcardLevel.Known]: FlashcardLevel.Known
 }
 
-const nextDay: { [key in FlashcardLevel]: FlashcardLevel } = {
-  [FlashcardLevel.None]: 0,
-  [FlashcardLevel.New]: 1,
-  [FlashcardLevel.Fresh]: 3,
-  [FlashcardLevel.Mature]: 7,
-  [FlashcardLevel.Old]: 14,
-  [FlashcardLevel.Known]: 28
+const nextDate: { [key in FlashcardLevel]: () => Date } = {
+  [FlashcardLevel.None]: () => addHours(new Date(), 12),
+  [FlashcardLevel.New]: () => addDays(new Date(), 1),
+  [FlashcardLevel.Fresh]: () => addDays(new Date(), 3),
+  [FlashcardLevel.Mature]: () => addDays(new Date(), 7),
+  [FlashcardLevel.Old]: () => addDays(new Date(), 14),
+  [FlashcardLevel.Known]: () => addDays(new Date(), 28)
 }
 
 export interface FlashCard {
@@ -41,13 +42,20 @@ export function useFlashcards() {
   const cached = React.useRef<FlashCard[]>()
   const [loading, setLoading] = React.useState(true)
   const [flashcards, setFlashcards] = React.useState<FlashCard[]>()
-  const { getItem, setItem } = useAsyncStorage('@flashcards')
+  const { getItem, setItem } = useAsyncStorage(config.storageKey)
 
   React.useEffect(() => {
+    let cancelled = false
     getItem().then(item => {
-      setFlashcards(item ? JSON.parse(item) : [])
-      setLoading(false)
+      if (!cancelled) {
+        setFlashcards(item ? JSON.parse(item) : [])
+        setLoading(false)
+      }
     })
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const upcomingFlashcards = (flashcards || []).filter(
@@ -58,7 +66,7 @@ export function useFlashcards() {
   const updateLevel = (flashcard: FlashCard, level: FlashcardLevel) => {
     const updated = {
       ...flashcard,
-      nextRepetition: addDays(new Date(), nextDay[level]),
+      nextRepetition: nextDate[flashcard.level](),
       level
     }
 
@@ -75,6 +83,7 @@ export function useFlashcards() {
     success,
     fail,
     loading,
-    upcomingFlashcards
+    upcomingFlashcards,
+    flashcards
   }
 }

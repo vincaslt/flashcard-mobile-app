@@ -1,3 +1,4 @@
+import { format, isBefore } from 'date-fns'
 import { Container, Text } from 'native-base'
 import * as React from 'react'
 import { Platform } from 'react-native'
@@ -5,18 +6,28 @@ import Swiper from 'react-native-deck-swiper'
 import FlashCardItem from '../components/FlashCardItem'
 import { FlashCard, useFlashcards } from '../hooks/useFlashcards'
 
-// TODO: when no words, say next word in xx:xx and show add and refresh button
 // TODO: add new flashcard
+// TODO: when no words, say next word in xx:xx and refresh when the time is up
 function StudyScreen() {
-  const { loading, upcomingFlashcards, fail, success } = useFlashcards()
+  const { loading, flashcards, upcomingFlashcards, fail, success } = useFlashcards()
   const [lastCardSwiped, setLastCardSwiped] = React.useState(false)
+
+  const nextEarliest =
+    flashcards &&
+    flashcards.reduce(
+      (min, flashcard) =>
+        !min || (flashcard.nextRepetition && isBefore(flashcard.nextRepetition, min))
+          ? flashcard.nextRepetition
+          : min,
+      flashcards[0].nextRepetition
+    )
 
   return (
     <Container>
       {loading ? (
         <Text>Loading</Text>
       ) : lastCardSwiped || upcomingFlashcards.length === 0 ? (
-        <Text>All done</Text>
+        <Text>All done! {nextEarliest && `Next up at ${format(nextEarliest)}`}</Text>
       ) : (
         <Swiper
           useViewOverflow={Platform.OS === 'ios'}
