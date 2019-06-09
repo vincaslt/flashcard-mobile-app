@@ -52,13 +52,13 @@ export function useFlashcards() {
     }
 
     if (level) {
-      setFlashcards([...flashcards.filter(({ id }) => id !== updated.id), updated])
+      setFlashcards(prev => [...prev.filter(({ id }) => id !== updated.id), updated])
     }
   }
 
   const addFlashcard = (original: string, flipside: string) => {
-    setFlashcards([
-      ...flashcards,
+    setFlashcards(prev => [
+      ...prev,
       {
         flipside,
         original,

@@ -1,4 +1,4 @@
-import { Card, CardItem, Text } from 'native-base'
+import { Card, CardItem, H2 } from 'native-base'
 import * as React from 'react'
 import { TouchableWithoutFeedback } from 'react-native'
 import { FlashCard } from '../hooks/useFlashcards'
@@ -15,8 +15,15 @@ function FlashCardItem({ flashcard }: Props) {
   return (
     <TouchableWithoutFeedback onPress={flip}>
       <Card style={{ elevation: 2, height: 400 }}>
-        <CardItem cardBody>
-          {flipped ? <Text>{flashcard.flipside}</Text> : <Text>{flashcard.original}</Text>}
+        <CardItem
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 1
+          }}
+          cardBody
+        >
+          {flipped ? <H2>{flashcard.flipside}</H2> : <H2>{flashcard.original}</H2>}
         </CardItem>
       </Card>
     </TouchableWithoutFeedback>

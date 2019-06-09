@@ -24,11 +24,11 @@ function NewFlashcardScreen() {
       <Form>
         <Item floatingLabel>
           <Label>Front side</Label>
-          <Textarea multiline rowSpan={3} onChangeText={setFrontside} />
+          <Textarea rowSpan={3} value={frontside} onChangeText={setFrontside} />
         </Item>
         <Item floatingLabel last>
-          <Label>Back side</Label>
-          <Textarea multiline rowSpan={3} onChangeText={setBackside} />
+          <Label>Back sider</Label>
+          <Textarea rowSpan={3} value={backside} onChangeText={setBackside} />
         </Item>
       </Form>
       <Button block style={{ margin: 15, marginTop: 30 }} onPress={handleAddFlashcard}>

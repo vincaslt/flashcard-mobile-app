@@ -5,7 +5,7 @@ interface CachedState {
   [key: string]: any
 }
 
-type CachedStateUpdater = <T>(key: string, value: T) => void
+type CachedStateUpdater = <T>(key: string, update: (prev: T) => T) => void
 
 const CachedStateContext = React.createContext<[CachedState?, CachedStateUpdater?]>([])
 
@@ -36,8 +36,8 @@ function CachedStateProvider({ children }: CachedStateProviderProps) {
     setItem(JSON.stringify(cachedState))
   }, [cachedState])
 
-  function updateState<T>(key: string, value: T) {
-    setCachedState(state => ({ ...state, [key]: value }))
+  function updateState<T>(key: string, update: (prev: T) => T) {
+    setCachedState(state => ({ ...state, [key]: update(state![key]) }))
   }
 
   return (
@@ -56,9 +56,9 @@ const useCachedStateStatus = () => {
 function useCachedState<T>(key: string) {
   const [cachedState, updateState] = React.useContext(CachedStateContext)
 
-  const stateUpdater = (value: T) => updateState && updateState(key, value)
+  const stateUpdater = (update: (prev: T) => T) => updateState && updateState(key, update)
 
-  return [cachedState![key], stateUpdater] as [T | undefined, (value: T) => void]
+  return [cachedState![key], stateUpdater] as [T | undefined, (update: (prev: T) => T) => void]
 }
 
 export { CachedStateProvider, useCachedState, useCachedStateStatus }

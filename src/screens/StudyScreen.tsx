@@ -1,4 +1,4 @@
-import { format, isBefore, min } from 'date-fns'
+import { format, min } from 'date-fns'
 import { Container, Text } from 'native-base'
 import * as React from 'react'
 import { Platform } from 'react-native'
@@ -6,7 +6,6 @@ import Swiper from 'react-native-deck-swiper'
 import FlashCardItem from '../components/FlashCardItem'
 import { FlashCard, useFlashcards } from '../hooks/useFlashcards'
 
-// TODO: add new flashcard
 // TODO: when no words, say next word in xx:xx and refresh when the time is up
 function StudyScreen() {
   const cachedInitialCards = React.useRef<FlashCard[]>()
