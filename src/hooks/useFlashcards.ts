@@ -2,6 +2,7 @@ import { useAsyncStorage } from '@react-native-community/async-storage'
 import { addDays, addHours, isAfter } from 'date-fns'
 import * as React from 'react'
 import config from '../config'
+import { useCachedState } from '../providers/CachedStateProvider'
 
 enum FlashcardLevel {
   None,
@@ -39,26 +40,9 @@ export interface FlashCard {
 }
 
 export function useFlashcards() {
-  const cached = React.useRef<FlashCard[]>()
-  const [loading, setLoading] = React.useState(true)
-  const [flashcards, setFlashcards] = React.useState<FlashCard[]>()
-  const { getItem, setItem } = useAsyncStorage(config.storageKey)
+  const [flashcards = [], setFlashcards] = useCachedState<FlashCard[]>('flashcards')
 
-  React.useEffect(() => {
-    let cancelled = false
-    getItem().then(item => {
-      if (!cancelled) {
-        setFlashcards(item ? JSON.parse(item) : [])
-        setLoading(false)
-      }
-    })
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  const upcomingFlashcards = (flashcards || []).filter(
+  const pendingFlashcards = (flashcards || []).filter(
     ({ level, nextRepetition }) =>
       level === FlashcardLevel.None || (nextRepetition && isAfter(new Date(), nextRepetition))
   )
@@ -71,9 +55,21 @@ export function useFlashcards() {
     }
 
     if (level) {
-      cached.current = [...(cached.current || []).filter(({ id }) => id !== updated.id), updated]
-      setItem(JSON.stringify(cached.current))
+      setFlashcards([...flashcards.filter(({ id }) => id !== updated.id), updated])
     }
+  }
+
+  // TODO: random now, accept params later
+  const addFlashcard = () => {
+    setFlashcards([
+      ...flashcards,
+      {
+        flipside: Math.random().toString(),
+        original: Math.random().toString(),
+        id: Math.random().toString(),
+        level: FlashcardLevel.None
+      }
+    ])
   }
 
   const fail = (flashcard: FlashCard) => updateLevel(flashcard, FlashcardLevel.New)
@@ -82,8 +78,8 @@ export function useFlashcards() {
   return {
     success,
     fail,
-    loading,
-    upcomingFlashcards,
-    flashcards
+    pendingFlashcards,
+    flashcards,
+    addFlashcard
   }
 }

@@ -1,7 +1,6 @@
 export default {
-  storageKey: '@flashcards',
   routes: {
-    newFlashcard: 'new-flashcard',
+    flashcards: 'flashcards',
     study: 'study'
   }
 }
