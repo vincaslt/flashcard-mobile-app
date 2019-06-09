@@ -4,23 +4,30 @@ interface Navigator {
   navigate: (sheetKey: string) => void
 }
 
+interface Route {
+  key: string
+  screen: React.ComponentType
+}
+
 const RouterContext = React.createContext<string>('')
 const NavigatorContext = React.createContext<Navigator>({ navigate: () => undefined })
 
 interface RouterProps {
-  children: React.ReactNode
+  children: (Screen: React.ReactNode) => React.ReactNode
   index: string
-  routes: string[]
+  routes: Route[]
 }
 
-const NavigationProvider = ({ routes, index, children }: RouterProps) => {
+const NavigationProvider = ({ index, routes, children }: RouterProps) => {
   const [activeRoute, setActiveRoute] = React.useState(index)
 
-  const route = routes.find(key => key === activeRoute)
+  const route = routes.find(({ key }) => key === activeRoute)
 
   if (!route) {
     throw Error(`Route ${activeRoute} not found!`)
   }
+
+  const Screen = route.screen
 
   return (
     <RouterContext.Provider value={activeRoute}>
@@ -29,7 +36,7 @@ const NavigationProvider = ({ routes, index, children }: RouterProps) => {
           navigate: setActiveRoute
         }}
       >
-        {children}
+        {children(<Screen />)}
       </NavigatorContext.Provider>
     </RouterContext.Provider>
   )

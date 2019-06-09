@@ -1,42 +1,41 @@
-import { Container, Text } from 'native-base'
+import { Container, Root, Text } from 'native-base'
 import * as React from 'react'
 import AppFooter from './components/AppFooter'
 import config from './config'
 import { CachedStateProvider, useCachedStateStatus } from './providers/CachedStateProvider'
-import { NavigationProvider, useActiveRoute } from './providers/NavigationProvider'
+import { NavigationProvider } from './providers/NavigationProvider'
 import FlashcardsScreen from './screens/FlashcardsScreen'
+import NewFlashcardScreen from './screens/NewFlashcardScreen'
 import StudyScreen from './screens/StudyScreen'
 
-function App() {
+function AppWrapper() {
   return (
-    <CachedStateProvider>
-      <NavigationProvider
-        index={config.routes.study}
-        routes={[config.routes.study, config.routes.flashcards]}
-      >
-        <AppRoutes />
-      </NavigationProvider>
-    </CachedStateProvider>
+    <Root>
+      <CachedStateProvider>
+        <NavigationProvider
+          index={config.routes.study}
+          routes={[
+            { key: config.routes.study, screen: StudyScreen },
+            { key: config.routes.flashcards, screen: FlashcardsScreen },
+            { key: config.routes.newFlaschard, screen: NewFlashcardScreen }
+          ]}
+        >
+          {screen => <App screen={screen} />}
+        </NavigationProvider>
+      </CachedStateProvider>
+    </Root>
   )
 }
 
-function AppRoutes() {
-  const route = useActiveRoute()
+function App({ screen }: { screen: React.ReactNode }) {
   const { loading } = useCachedStateStatus()
 
   return (
     <Container>
-      {loading ? (
-        <Text>Loading...</Text>
-      ) : (
-        <>
-          {route === config.routes.study && <StudyScreen />}
-          {route === config.routes.flashcards && <FlashcardsScreen />}
-        </>
-      )}
+      {loading ? <Text>Loading...</Text> : screen}
       <AppFooter />
     </Container>
   )
 }
 
-export default App
+export default AppWrapper

@@ -1,7 +1,4 @@
-import { useAsyncStorage } from '@react-native-community/async-storage'
 import { addDays, addHours, isAfter } from 'date-fns'
-import * as React from 'react'
-import config from '../config'
 import { useCachedState } from '../providers/CachedStateProvider'
 
 enum FlashcardLevel {
@@ -59,13 +56,12 @@ export function useFlashcards() {
     }
   }
 
-  // TODO: random now, accept params later
-  const addFlashcard = () => {
+  const addFlashcard = (original: string, flipside: string) => {
     setFlashcards([
       ...flashcards,
       {
-        flipside: Math.random().toString(),
-        original: Math.random().toString(),
+        flipside,
+        original,
         id: Math.random().toString(),
         level: FlashcardLevel.None
       }
