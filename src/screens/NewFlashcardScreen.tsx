@@ -6,8 +6,8 @@ import { useNavigation } from '../providers/NavigationProvider'
 
 function NewFlashcardScreen() {
   const { navigate } = useNavigation()
-  const [frontside, setFrontside] = React.useState()
-  const [backside, setBackside] = React.useState()
+  const [frontside, setFrontside] = React.useState('')
+  const [backside, setBackside] = React.useState('')
   const { addFlashcard } = useFlashcards()
 
   const handleAddFlashcard = () => {
@@ -22,13 +22,21 @@ function NewFlashcardScreen() {
   return (
     <Container>
       <Form>
-        <Item floatingLabel>
-          <Label>Front side</Label>
-          <Textarea rowSpan={3} value={frontside} onChangeText={setFrontside} />
+        <Item>
+          <Textarea
+            placeholder="Front Side"
+            rowSpan={3}
+            value={frontside}
+            onChangeText={setFrontside}
+          />
         </Item>
-        <Item floatingLabel last>
-          <Label>Back sider</Label>
-          <Textarea rowSpan={3} value={backside} onChangeText={setBackside} />
+        <Item last>
+          <Textarea
+            placeholder="Back Side"
+            rowSpan={3}
+            value={backside}
+            onChangeText={setBackside}
+          />
         </Item>
       </Form>
       <Button block style={{ margin: 15, marginTop: 30 }} onPress={handleAddFlashcard}>

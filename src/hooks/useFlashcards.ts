@@ -1,4 +1,5 @@
 import { addDays, addHours, isAfter } from 'date-fns'
+import { useEffect } from 'react'
 import { useCachedState } from '../providers/CachedStateProvider'
 
 enum FlashcardLevel {
@@ -39,7 +40,7 @@ export interface FlashCard {
 export function useFlashcards() {
   const [flashcards = [], setFlashcards] = useCachedState<FlashCard[]>('flashcards')
 
-  const pendingFlashcards = (flashcards || []).filter(
+  const pendingFlashcards = flashcards.filter(
     ({ level, nextRepetition }) =>
       level === FlashcardLevel.None || (nextRepetition && isAfter(new Date(), nextRepetition))
   )
@@ -52,12 +53,12 @@ export function useFlashcards() {
     }
 
     if (level) {
-      setFlashcards(prev => [...prev.filter(({ id }) => id !== updated.id), updated])
+      setFlashcards((prev = []) => [...prev.filter(({ id }) => id !== updated.id), updated])
     }
   }
 
   const addFlashcard = (original: string, flipside: string) => {
-    setFlashcards(prev => [
+    setFlashcards((prev = []) => [
       ...prev,
       {
         flipside,

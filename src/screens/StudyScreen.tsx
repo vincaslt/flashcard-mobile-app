@@ -1,5 +1,5 @@
-import { format, min } from 'date-fns'
-import { Container, Text } from 'native-base'
+import { distanceInWordsToNow, min } from 'date-fns'
+import { Container, Content, H2, Text } from 'native-base'
 import * as React from 'react'
 import { Platform } from 'react-native'
 import Swiper from 'react-native-deck-swiper'
@@ -25,7 +25,13 @@ function StudyScreen() {
   return (
     <Container>
       {lastCardSwiped || pendingFlashcards.length === 0 ? (
-        <Text>All done! {upcomingAt && `Next up at ${format(upcomingAt)}`}</Text>
+        <Content
+          contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+          padder
+        >
+          <H2>All done!</H2>
+          {upcomingAt && <Text>Next up in {distanceInWordsToNow(upcomingAt)}</Text>}
+        </Content>
       ) : (
         <Swiper
           useViewOverflow={Platform.OS === 'ios'}
