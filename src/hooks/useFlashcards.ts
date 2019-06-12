@@ -69,6 +69,9 @@ export function useFlashcards() {
     ])
   }
 
+  const deleteFlashcard = (flashcardId: string) =>
+    setFlashcards((prev = []) => prev.filter(({ id }) => flashcardId !== id))
+
   const fail = (flashcard: FlashCard) => updateLevel(flashcard, FlashcardLevel.New)
   const success = (flashcard: FlashCard) => updateLevel(flashcard, nextLevel[flashcard.level])
 
@@ -77,6 +80,7 @@ export function useFlashcards() {
     fail,
     pendingFlashcards,
     flashcards,
-    addFlashcard
+    addFlashcard,
+    deleteFlashcard
   }
 }
