@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { BackHandler } from 'react-native'
 
 interface Navigator {
   navigate: (sheetKey: string) => void
@@ -19,13 +20,28 @@ interface RouterProps {
 }
 
 const NavigationProvider = ({ index, routes, children }: RouterProps) => {
+  const history = React.useRef<string[]>([])
   const [activeRoute, setActiveRoute] = React.useState(index)
 
   const route = routes.find(({ key }) => key === activeRoute)
 
+  const navigate = (target: string) => {
+    history.current.push(activeRoute)
+    setActiveRoute(target)
+  }
+
   if (!route) {
     throw Error(`Route ${activeRoute} not found!`)
   }
+
+  BackHandler.addEventListener('hardwareBackPress', () => {
+    const previous = history.current.pop()
+    if (previous) {
+      setActiveRoute(previous)
+      return true
+    }
+    return false
+  })
 
   const Screen = route.screen
 
@@ -33,7 +49,7 @@ const NavigationProvider = ({ index, routes, children }: RouterProps) => {
     <RouterContext.Provider value={activeRoute}>
       <NavigatorContext.Provider
         value={{
-          navigate: setActiveRoute
+          navigate
         }}
       >
         {children(<Screen />)}

@@ -14,7 +14,7 @@ function NewFlashcardScreen() {
     addFlashcard(frontside, backside)
     Toast.show({
       text: 'Flashcard added',
-      position: 'top'
+      buttonText: 'ok'
     })
     navigate(config.routes.flashcards)
   }
@@ -39,7 +39,12 @@ function NewFlashcardScreen() {
           />
         </Item>
       </Form>
-      <Button block style={{ margin: 15, marginTop: 30 }} onPress={handleAddFlashcard}>
+      <Button
+        disabled={!frontside || !backside}
+        block
+        style={{ margin: 15, marginTop: 30 }}
+        onPress={handleAddFlashcard}
+      >
         <Text>Save</Text>
       </Button>
     </Container>

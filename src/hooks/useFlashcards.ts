@@ -2,7 +2,7 @@ import { addDays, addHours, isAfter } from 'date-fns'
 import { useEffect } from 'react'
 import { useCachedState } from '../providers/CachedStateProvider'
 
-enum FlashcardLevel {
+export enum FlashcardLevel {
   None,
   New,
   Fresh,

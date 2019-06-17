@@ -1,4 +1,4 @@
-package com.flashcards;
+package com.vincas.memocards;
 
 import android.app.Application;
 

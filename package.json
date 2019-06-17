@@ -1,6 +1,6 @@
 {
-  "name": "flashcards",
-  "version": "0.0.1",
+  "name": "memocards",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
